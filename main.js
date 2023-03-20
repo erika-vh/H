@@ -9,21 +9,10 @@ let kepek = [
 let melyik=-1
 let szamlalo=0
 let nev=prompt("Név:")
+let maxKep= setMaxKep()
 let secs=0,mins=0
 let idofunc
-let ranglista = [
-    {
-        nev:"342",
-        perc:2,
-        masodperc:32
-    },
-    {
-        nev:"fsdfsdfsd",
-        perc:0,
-        masodperc:12
-    }
-]
-
+let ranglista =JSON.parse(localStorage.getItem("ranglista"))
 $(document).ready(init);
 
 function init() {
@@ -94,8 +83,11 @@ function asd(ix){
         setTimeout(() => {
             if(keres())
             setTimeout(() => {
-                alert("nyertél\r\nLépés: "+ szamlalo+"\r\nIdő: "+kettoSzamjegy(mins) +":"+kettoSzamjegy(secs))
                 clearInterval(idofunc)
+                alert("nyertél\r\nLépés: "+ szamlalo+"\r\nIdő: "+kettoSzamjegy(mins) +":"+kettoSzamjegy(secs))
+                addRang()
+                rangki()
+                localStorage.setItem("ranglista",JSON.stringify(ranglista))
             },2000)
         }, 2000);    
     }
@@ -122,26 +114,33 @@ function forog(nth, deg){
 
 function egyezes(index){
 
+    let temp=[]
     if(melyik!=-1 && kepek[melyik]==kepek[index]){
         //setTimeout később olvassa be az értéket
-        temp=[melyik,index]
+        temp.push(melyik)
+        temp.push(index)
         setTimeout(() => {
             eltunik(temp[0])
             eltunik(temp[1])
+            temp.shift()
+            temp.shift()
         }, 2000);
         szamlalo++ 
         $("#lepes").empty()
         $("#lepes").append(szamlalo)     
     }
     else if(melyik!=-1){
-        temp=[melyik,index]
+        temp.push(melyik)
+        temp.push(index)
         setTimeout(() => {
-            forog(temp[0], 0)
-            forog(temp[1], 0)
-        }, 2000); 
-        szamlalo++
+            forog(temp[0],0)
+            forog(temp[1],0)
+            temp.shift()
+            temp.shift()
+        }, 2000);
+        szamlalo++ 
         $("#lepes").empty()
-        $("#lepes").append(szamlalo)
+        $("#lepes").append(szamlalo)     
     }
     melyik= melyik==-1?index:-1
     
@@ -181,17 +180,22 @@ function rangki(){
         $("#ranglista").children("ol").append(`<li><b>${ranglista[ix].nev}</b>: ${kettoSzamjegy(ranglista[ix].perc)}:${kettoSzamjegy(ranglista[ix].masodperc)}</li>`)   
     }
 }
-// $(function a() {
-//     $("img").on('click', function() {
-        
 
-//         var val = -180;
-//         $(this).css({
-//             '-webkit-transform':'rotateY(' + 360 + 'deg)',
-//             '-moz-transform':   'rotateY(' + 360 + 'deg)',
-//             '-ms-transform':    'rotateY(' + 360 + 'deg)',
-//             '-o-transform':     'rotateY(' + 360 + 'deg)',
-//             'transform':        'rotateY(' + 360 + 'deg)'
-//         });
-//     });
-// });
+function addRang(){
+    let ix=0
+    while(ix<ranglista.length && mins*60+secs>=ranglista[ix].perc*60+ranglista[ix].masodperc){
+        ix++
+    } 
+    
+    ranglista.splice(ix,0,{
+        nev:nev,
+        perc:mins,
+        masodperc:secs})
+}
+
+function setMaxKep(){
+    let a =prompt("Összesen hány kép legyen?")
+    
+
+    return !isNaN(a) && a<=kepek.length && a>0?parseInt(a):kepek.length
+}console.log(maxKep);
