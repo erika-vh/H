@@ -17,6 +17,7 @@ $(document).ready(init);
 
 function init() {
     torol()
+    kepvalaszt()
     kepek = dupla()
     kever()
     rangki()
@@ -45,6 +46,7 @@ function dupla(){
 function torol(){
     $("#kepek").empty()
     szamlalo=0
+    clearInterval(idofunc)
     secs=0,mins=0
     $("#ido").empty()
     $("#ido").append("00:00")
@@ -191,11 +193,16 @@ function addRang(){
         nev:nev,
         perc:mins,
         masodperc:secs})
-}
+    }
 
 function setMaxKep(){
     let a =prompt("Összesen hány kép legyen?")
     
 
     return !isNaN(a) && a<=kepek.length && a>0?parseInt(a):kepek.length
-}console.log(maxKep);
+}
+
+function kepvalaszt(){
+    while(kepek.length>maxKep)
+        kepek.splice(parseInt(Math.random()*kepek.length),1)
+}
