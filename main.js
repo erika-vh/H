@@ -12,7 +12,7 @@ let nev=prompt("Név:")
 let maxKep= setMaxKep()
 let secs=0,mins=0
 let idofunc
-let ranglista =JSON.parse(localStorage.getItem("ranglista"))
+let ranglista =JSON.parse(localStorage.getItem("ranglista"))!=null?JSON.parse(localStorage.getItem("ranglista")):[]
 $(document).ready(init);
 
 function init() {
@@ -177,24 +177,33 @@ function kettoSzamjegy(szam){
 }
 
 function rangki(){
-    $("#ranglista").children("ol").empty()
-    for (let ix = 0; ix < ranglista.length; ix++) {
-        $("#ranglista").children("ol").append(`<li><b>${ranglista[ix].nev}</b>: ${kettoSzamjegy(ranglista[ix].perc)}:${kettoSzamjegy(ranglista[ix].masodperc)}</li>`)   
+    if(ranglista!=null){
+        $("#ranglista").children("ol").empty()
+        for (let ix = 0; ix < ranglista.length; ix++) {
+            $("#ranglista").children("ol").append(`<li><b>${ranglista[ix].nev}</b>: ${kettoSzamjegy(ranglista[ix].perc)}:${kettoSzamjegy(ranglista[ix].masodperc)}</li>`)   
+        }
     }
 }
 
 function addRang(){
     let ix=0
-    while(ix<ranglista.length && mins*60+secs>=ranglista[ix].perc*60+ranglista[ix].masodperc){
-        ix++
-    } 
-    
-    ranglista.splice(ix,0,{
-        nev:nev,
-        perc:mins,
-        masodperc:secs})
+    if(ranglista!=null){
+        while(ix<ranglista.length && mins*60+secs>=ranglista[ix].perc*60+ranglista[ix].masodperc){
+            ix++
+        } 
+        
+        ranglista.splice(ix,0,{
+            nev:nev,
+            perc:mins,
+            masodperc:secs})
     }
-
+    else{
+        ranglista.push({
+            nev:nev,
+            perc:mins,
+            masodperc:secs})
+    }
+}
 function setMaxKep(){
     let a =prompt("Összesen hány kép legyen?")
     
